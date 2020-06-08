@@ -1,8 +1,10 @@
 #include <iostream>
+#include <Windows.h>
 
 using namespace std;
 
 int main() {
 	cout << "Konichiwa bitchass" << endl;
-	//THIS IS A COMMENT
+	
+	return 0;
 }
