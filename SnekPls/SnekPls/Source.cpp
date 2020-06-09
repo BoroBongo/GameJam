@@ -3,7 +3,7 @@
 #endif
 
 #include <Windows.h>
-#include <d2d1_1.h>
+#include "Graphics.h"
 #include <string>
 #include <sstream>
 
@@ -14,29 +14,99 @@ const int nWidthPlayArea = 20;
 const int nHeightPlayArea = 20;
 int nPosX, nPosY, nFruitPosX, nFruitPosY, nScore;
 // WINDOW STUFF
+Graphics* graphics;
+int nMousePos[] = { 100,100 };
+float rgba[] = { 0.5, 0.5, 1,1 };
+wstringstream oss;
+wstring mouseClicked = L"";
+
+void resetstring() {
+	wstringstream ossc;
+	oss.swap(ossc);
+}
+
+enum class bMouseClicked
+{
+	CLICKED,
+	NOT_CLICKED
+}; 
+
+bMouseClicked mouseBool = bMouseClicked::NOT_CLICKED;
+void print(HWND hwnd) {
+	resetstring();
+	switch (mouseBool) {
+	case bMouseClicked::CLICKED: {
+			mouseClicked = L" CLICKED ";
+			break;
+		}
+		
+		case bMouseClicked::NOT_CLICKED: {
+			mouseClicked = L" NOT CLICKED";
+			break;
+		}
+	}
+	oss << nMousePos[0] << "  " << nMousePos[1] << " | " << mouseClicked;
+
+	SetWindowTextW(hwnd, oss.str().c_str());
+}
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
-	if (uMsg == WM_DESTROY) {
+	switch (uMsg) {
+	case WM_PAINT: {
+		graphics->BeginDraw();
+		graphics->ClearScreen(0.53, 0.29, 0.62);
+		graphics->DrawCircle(nMousePos[0],nMousePos[1],60,rgba[0],rgba[1],rgba[2],rgba[3]);
+		graphics->EndDraw();
+		break;
+	}
+	case WM_DESTROY: {
 		PostQuitMessage(0);
 		return 0;
+		break;
 	}
-	if (uMsg == WM_KEYDOWN) {
+	case WM_MOUSEMOVE: {
+			nMousePos[0] = (int)(short)LOWORD(lParam);
+			nMousePos[1] = (int)(short)HIWORD(lParam);
+		break;
+	}
+	case WM_LBUTTONDOWN:{
+	//	oss << " " << " CLICKED ";
+		mouseBool = bMouseClicked::CLICKED;
+		rgba[0] = 1;
+		rgba[1] = 0.56;
+		rgba[2] = 0.62;
+		rgba[3] = 1;
+		break;
+	}
+	case WM_LBUTTONUP: {
+	//	oss << " " << " UP ";
+		mouseBool = bMouseClicked::NOT_CLICKED;
+		rgba[0] = 0.5;
+		rgba[1] = 0.5;
+		rgba[2] = 1;
+		rgba[3] = 1;
+			
+		break;
+	}
+	case WM_KEYDOWN: {
 		wchar_t text_buffer[20] = { 0 }; //temporary buffer
 		swprintf(text_buffer, _countof(text_buffer), L"\n%d <-- loool", wParam); // convert
 		OutputDebugString(text_buffer); // print
 		// CHANGE TITLE ACCORDING TO WHAT WAS PRESSED
-		wstringstream oss;
-		oss << "Did you just click: " << (char)wParam;
-		SetWindowTextW(hwnd, oss.str().c_str());
-		if (wParam == (int)VK_ESCAPE) {
-			PostQuitMessage(0);
-			return 0;
-		}
-		if (wParam == (int)'S') {
-			OutputDebugStringA("\nKliknoles se eske"); // print
-		}
+	//	oss << " | Did you just click: " << (char)wParam;
+		
+	switch (wParam) {
+	case VK_ESCAPE: {
+		PostQuitMessage(0);
+		return 0;
+		break;
 	}
-	DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+	break;
+	}
+	default: DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
 }
 
 
@@ -46,7 +116,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	WNDCLASSEX wc;
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	wc.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = WindowProc;
 	wc.lpszClassName = L"MAIN WINDOW";
@@ -54,13 +124,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 	RegisterClassEx(&wc);
 
-	HWND windowHandle = CreateWindow(L"MAIN WINDOW", L"Testing Windows", WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, nullptr, nullptr, hInstance, nullptr);
+	RECT rect = {0,0,800,600};
+	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, WS_EX_OVERLAPPEDWINDOW);
+
+	HWND windowHandle = CreateWindow(L"MAIN WINDOW", L"Testing Windows", WS_OVERLAPPEDWINDOW, 100, 100, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, hInstance, nullptr);
+
 	if (!windowHandle) { int error = GetLastError(); return error; }
+	graphics = new Graphics();
+	if (!graphics->Init(windowHandle)) {
+		delete graphics;
+		return -1;
+	}
 	ShowWindow(windowHandle, nCmdShow);
 	MSG message;
 	while (GetMessage(&message, NULL, 0, 0)) {
 		TranslateMessage(&message);
 		DispatchMessage(&message);
+
+		print(windowHandle);
 	}
+	return message.wParam;
 	return 0;
 }
