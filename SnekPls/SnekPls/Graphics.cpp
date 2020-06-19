@@ -42,3 +42,32 @@ void Graphics::DrawCircle(float x, float y, float radius, float r, float g, floa
 
 	brush->Release();
 }
+
+void Graphics::DrawRectangle(float x, float y, float r, float g, float b, float a, float width, float height)
+{
+	ID2D1SolidColorBrush* brush;
+	renderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush);
+
+
+	renderTarget->DrawRectangle(D2D1::RectF(x, y, x+width, y+height), brush, 3.0f);
+
+	brush->Release();
+}
+
+
+void Graphics::DrawPlayground(Playground* playground, float x, float y, float width)
+{
+	int h = *(playground->getHeight());
+	int w = *(playground->getWidth());
+	std::vector<char> items = *(playground->getArray());
+
+	for (int i = 0; i < h;i++) {
+		for (int j = 0; j < w; j++) {
+			this->DrawRectangle(x, y, 0.5, 0.5, 1, 1, width, width);
+			x += width;
+		}
+		x -= (width * w);
+		y += width;
+	}
+
+}

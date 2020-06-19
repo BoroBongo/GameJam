@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include "Graphics.h"
+#include "Playground.h"
 #include <string>
 #include <sstream>
 
@@ -15,6 +16,7 @@ const int nHeightPlayArea = 20;
 int nPosX, nPosY, nFruitPosX, nFruitPosY, nScore;
 // WINDOW STUFF
 Graphics* graphics;
+Playground* playground;
 int nMousePos[] = { 100,100 };
 float rgba[] = { 0.5, 0.5, 1,1 };
 wstringstream oss;
@@ -158,15 +160,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 	if (!windowHandle) { int error = GetLastError(); return error; }
 	graphics = new Graphics();
+	playground = new Playground(20,4);
 	if (!graphics->Init(windowHandle)) {
 		delete graphics;
 		return -1;
 	}
 	ShowWindow(windowHandle, nCmdShow);
-
-	float y = 0.0;
-	float ySpeed = 0.0f;
-
 
 	MSG message;
 	message.message = WM_NULL;
@@ -180,23 +179,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 		}
 		else{
 			// UPDATE!
-			ySpeed += 1.0f;
-				y += ySpeed;
-			if (up) {
-				ySpeed += 0.145f;
-			}
-			if (y > (rect.bottom-25.0f)) {
-				y = (rect.bottom - 25.0f);
-				ySpeed -= 30.0f;
-				up = true;
-			}
-			else {
-				up = false;
-			}
 			//RENDER
 			graphics->BeginDraw();
 			graphics->ClearScreen(0.53, 0.29, 0.62);
-			graphics->DrawCircle(375.0f, y, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3]);
+	//		graphics->DrawCircle(375.0f, 375.0f, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3]);
+			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f);
+	//		graphics->DrawRectangle(50.0f, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3], 25.0f, 25.0f);
 			graphics->EndDraw();
 
 			print(windowHandle);
