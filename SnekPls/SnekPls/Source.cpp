@@ -23,6 +23,8 @@ wstringstream oss;
 wstring mouseClicked = L"";
 string keyClicked = "";
 char pressedKey;
+char check = 'X';
+
 
 void resetstring() {
 	wstringstream ossc;
@@ -183,8 +185,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			graphics->BeginDraw();
 			graphics->ClearScreen(0.53, 0.29, 0.62);
 	//		graphics->DrawCircle(375.0f, 375.0f, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3]);
-			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f);
-	//		graphics->DrawRectangle(50.0f, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3], 25.0f, 25.0f);
+			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f, rgba[0], rgba[2], rgba[1], rgba[3]);
+		//	graphics->DrawSomeText(0, 0, rgba[0], rgba[2], rgba[1], rgba[3], (const wchar_t*)&check);
+			//graphics->DrawSomeText((-480), (-480), 0.5, 1, 0.5, 1, L"2");
 			graphics->EndDraw();
 
 			print(windowHandle);
