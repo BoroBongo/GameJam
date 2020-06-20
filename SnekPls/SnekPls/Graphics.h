@@ -29,6 +29,6 @@ public:
 
 	void DrawSomeText(float x, float y, float r, float g, float b, float a, const std::wstring& string1);
 
-	void DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a);
+	void DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f);
 };
 

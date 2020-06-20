@@ -39,8 +39,8 @@ HRESULT Graphics::CreateDeviceIndependentResources()
 {
 	HRESULT res = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 
-	static const WCHAR msc_fontName[] = L"Verdana";
-	static const FLOAT msc_fontSize = 22;
+	static const WCHAR msc_fontName[] = L"Comic Sans";
+	static const FLOAT msc_fontSize = 12;
 
 	if (SUCCEEDED(res))
 	{
@@ -121,7 +121,7 @@ void Graphics::DrawSomeText(float x, float y, float r, float g, float b, float a
 }
 
 
-void Graphics::DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a)
+void Graphics::DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f)
 {
 	int h = *(playground->getHeight());
 	int w = *(playground->getWidth());
@@ -130,7 +130,13 @@ void Graphics::DrawPlayground(Playground* playground, float x, float y, float wi
 	for (int i = 0; i < h;i++) {
 		for (int j = 0; j < w; j++) {
 			this->DrawRectangle(x, y, 0.5, 0.5, 1, 1, width, width);
-			this->DrawSomeText(x - (6 * width), y - (2 * width), r, g, b, a, items[i][j]);
+			this->DrawSomeText((x-390.0f)+(j*width), (y-290.0f)+(i*width), r, g, b, 0.3f, items[i][j]);
+			if (items[i][j]==L"X") {
+				this->DrawCircle((x+12.5f), (y+12.5f), 7.0f, r, g, b, a);
+			}
+			if (items[i][j] == L"B") {
+				this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, b, g, g, a);
+			}
 			x += width;
 		}
 		x -= (width * w);

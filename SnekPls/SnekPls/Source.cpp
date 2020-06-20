@@ -5,10 +5,11 @@
 #include <Windows.h>
 #include "Graphics.h"
 #include "Playground.h"
-#include <string>
 #include <sstream>
+#include <ctime>
 
-using namespace std;
+
+using namespace std::chrono_literals;
 // GAME STUFF 
 bool bGameRun;
 const int nWidthPlayArea = 20;
@@ -25,7 +26,6 @@ string keyClicked = "";
 char pressedKey;
 char check = 'X';
 
-
 void resetstring() {
 	wstringstream ossc;
 	oss.swap(ossc);
@@ -36,6 +36,8 @@ enum class bMouseClicked
 	CLICKED,
 	NOT_CLICKED
 }; 
+
+Playground::Moving movedir;
 
 bMouseClicked mouseBool = bMouseClicked::NOT_CLICKED;
 bMouseClicked keyBool = bMouseClicked::NOT_CLICKED;
@@ -77,7 +79,7 @@ void print(HWND hwnd) {
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-
+	
 	switch (uMsg) {
 	//case WM_PAINT: {
 	//	graphics->BeginDraw();
@@ -129,6 +131,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		return 0;
 		break;
 	}
+	case VK_RIGHT: {
+		
+		movedir = Playground::Moving::RIGHT;
+		break;
+	}
+	case VK_LEFT: {
+		
+		movedir = Playground::Moving::LEFT;
+		break;
+	}
+	case VK_UP: {
+		
+		movedir = Playground::Moving::UP;
+		break;
+	}
+	case VK_DOWN: {
+		
+		movedir = Playground::Moving::DOWN;
+		break;
+	}
 	}
 	break;
 	}
@@ -140,10 +162,30 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 }
 
+void InputCheck() {
+	switch (movedir) {
+	case Playground::Moving::UP: {
+		playground->ClickUp();
+		break;
+	}
+	case Playground::Moving::DOWN: {
+		playground->ClickDown();
+		break;
+	}
+	case Playground::Moving::LEFT: {
+		playground->ClickLeft();
+		break;
+	}
+	case Playground::Moving::RIGHT: {
+		playground->ClickRight();
+		break;
+	}
+	}
+
+}
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int nCmdShow) {
-
 	WNDCLASSEX wc;
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -163,6 +205,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	if (!windowHandle) { int error = GetLastError(); return error; }
 	graphics = new Graphics();
 	playground = new Playground(20,20);
+
 	if (!graphics->Init(windowHandle)) {
 		delete graphics;
 		return -1;
@@ -172,6 +215,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	MSG message;
 	message.message = WM_NULL;
 	bool up = false;
+	time_t start, end;
+	std::chrono::steady_clock::time_point start1;
+	start1 = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point teraz;
+	float elapsed_f = 0;
 	while (message.message != WM_QUIT) {
 		if (PeekMessage(&message, windowHandle, 0, 0, PM_REMOVE)) {
 			//anslateMessage(&message);
@@ -185,9 +233,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			graphics->BeginDraw();
 			graphics->ClearScreen(0.53, 0.29, 0.62);
 	//		graphics->DrawCircle(375.0f, 375.0f, 50.0f, rgba[0], rgba[1], rgba[2], rgba[3]);
-			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f, rgba[0], rgba[2], rgba[1], rgba[3]);
+			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f, rgba[0], rgba[2], rgba[1], rgba[3], elapsed_f);
 		//	graphics->DrawSomeText(0, 0, rgba[0], rgba[2], rgba[1], rgba[3], (const wchar_t*)&check);
 			//graphics->DrawSomeText((-480), (-480), 0.5, 1, 0.5, 1, L"2");
+			teraz = std::chrono::steady_clock::now();
+			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start1);
+			auto ms = milliseconds.count();
+			if (milliseconds > std::chrono::milliseconds(100))
+			{
+				playground->move(elapsed_f);
+				InputCheck();
+				start1 = teraz;
+			}
+
 			graphics->EndDraw();
 
 			print(windowHandle);
