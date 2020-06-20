@@ -32,7 +32,7 @@ int * Playground::getHeight()
 	return &area_height;
 }
 
-std::vector<char> * Playground::getArray()
+std::vector<vector<char> > * Playground::getArray()
 {
 	return &area_line;
 }

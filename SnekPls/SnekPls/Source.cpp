@@ -160,7 +160,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 	if (!windowHandle) { int error = GetLastError(); return error; }
 	graphics = new Graphics();
-	playground = new Playground(20,4);
+	playground = new Playground(20,20);
 	if (!graphics->Init(windowHandle)) {
 		delete graphics;
 		return -1;

@@ -59,7 +59,7 @@ void Graphics::DrawPlayground(Playground* playground, float x, float y, float wi
 {
 	int h = *(playground->getHeight());
 	int w = *(playground->getWidth());
-	std::vector<char> items = *(playground->getArray());
+	vector<vector<char> > items = *(playground->getArray());
 
 	for (int i = 0; i < h;i++) {
 		for (int j = 0; j < w; j++) {
