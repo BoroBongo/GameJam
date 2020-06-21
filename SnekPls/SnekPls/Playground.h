@@ -36,15 +36,15 @@ public:
 	int * getHeight();
 	vector<vector<wstring> > * getArray();
 
-	void moveRight(float elapsed_f);
+	void moveRight( );
 
-	void moveLeft(float elapsed_f);
+	void moveLeft( );
 
-	void moveUp(float elapsed_f);
+	void moveUp( );
 
-	void moveDown(float elapsed_f);
+	void moveDown( );
 
-	void move(float elapsed_f);
+	void move(std::chrono::milliseconds elapsed_f);
 
 	void ClickRight();
 	void ClickLeft();

@@ -129,8 +129,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 	}
 	case VK_LEFT: {
-		
-		movedir = Playground::Moving::LEFT;
+			movedir = Playground::Moving::LEFT;
 		break;
 	}
 	case VK_UP: {
@@ -240,14 +239,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			graphics->DrawSomeTextScore(-500, -100, 0.5, 1, 0.5, 1, to_wstring(playground->score));
 			teraz = std::chrono::steady_clock::now();
 			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start1);
-			if (milliseconds > std::chrono::milliseconds(100))
+			if (milliseconds > std::chrono::milliseconds(150))
 			{
-				playground->move(elapsed_f);
-				InputCheck();
+				playground->move(milliseconds);
 				start1 = teraz;
 			}
 			auto milliseconds2 = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start);
-			if (milliseconds2 > std::chrono::milliseconds(50))
+			if (milliseconds2 > std::chrono::milliseconds(151))
 			{
 				InputCheck();
 				start = teraz;

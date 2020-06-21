@@ -59,7 +59,7 @@ std::vector<vector<wstring> > * Playground::getArray()
 	return& area_line;
 }
 
-void Playground::moveRight(float elapsed_f)
+void Playground::moveRight()
 {
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
@@ -79,7 +79,7 @@ void Playground::moveRight(float elapsed_f)
 
 }
 
-void Playground::moveLeft(float elapsed_f)
+void Playground::moveLeft()
 {
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
@@ -98,7 +98,7 @@ void Playground::moveLeft(float elapsed_f)
 	}
 }
 
-void Playground::moveUp(float elapsed_f)
+void Playground::moveUp()
 {
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
@@ -117,7 +117,7 @@ void Playground::moveUp(float elapsed_f)
 	}
 }
 
-void Playground::moveDown(float elapsed_f)
+void Playground::moveDown()
 {
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
@@ -137,26 +137,26 @@ void Playground::moveDown(float elapsed_f)
 
 }
 
-void Playground::move(float elapsed_f)
+void Playground::move(std::chrono::milliseconds elapsed_f)
 {
 	if (dead) {
 		return;
 	}
 	switch (movedir) {
 	case Moving::UP: {
-		this->moveUp(elapsed_f);
+		this->moveUp();
 		break;
 	}
 	case Moving::DOWN: {
-		this->moveDown(elapsed_f);
+		this->moveDown();
 		break;
 	}
 	case Moving::LEFT: {
-		this->moveLeft(elapsed_f);
+		this->moveLeft();
 		break;
 	}
 	case Moving::RIGHT: {
-		this->moveRight(elapsed_f);
+		this->moveRight();
 		break;
 	}
 	}
