@@ -14,7 +14,8 @@ class Playground
 	int area_width;
 	int area_height;
 	vector<vector<wstring> > area_line;
-
+	vector<int> head_pos;
+	vector<int> berry_pos;
 
 
 public:
@@ -38,6 +39,8 @@ public:
 
 	void moveRight( );
 
+	void moveBody();
+
 	void moveLeft( );
 
 	void moveUp( );
@@ -45,6 +48,8 @@ public:
 	void moveDown( );
 
 	void move(std::chrono::milliseconds elapsed_f);
+
+	void setHeadPos();
 
 	void ClickRight();
 	void ClickLeft();

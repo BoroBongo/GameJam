@@ -165,6 +165,9 @@ void Graphics::DrawPlayground(std::unique_ptr<Playground> & playground, float x,
 			if (items[i][j] == L"B") {
 				this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, b, g, g, a);
 			}
+			if (items[i][j] == L"0") {
+				this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, 0.75f, g, g, a);
+			}
 			x += width;
 		}
 		x -= (width * w);
