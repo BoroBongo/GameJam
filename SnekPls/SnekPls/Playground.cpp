@@ -16,9 +16,26 @@ Playground::Playground(int area_widthN, int area_heightN)
         }
     }
 	area_line[10][10] = L"X";
-	area_line[rand() % area_heightN][rand() % area_widthN] = L"B";
+	this->ResetBerry();
 
 	//to_wstring(j +(area_width*i))
+
+	for (int i = 0; i < area_height; i++) {
+		for (int j = 0; j < area_width; j++) {
+			if (i==0) {
+				area_line[i][j] = L"W";
+			}
+			if (j==0) {
+				area_line[i][j] = L"W";
+			}
+			if (j == area_width - 1) {
+				area_line[i][j] = L"W";
+			}
+			if (i == area_height-1) {
+				area_line[i][j] = L"W";
+			}
+		}
+	}
 
 }
 
@@ -37,7 +54,7 @@ int * Playground::getHeight()
 	return& area_height;
 }
 
-std::vector<vector<wstring> > *  Playground::getArray()
+std::vector<vector<wstring> > * Playground::getArray()
 {
 	return& area_line;
 }
@@ -49,6 +66,9 @@ void Playground::moveRight(float elapsed_f)
 			if (area_line[i][j]==L"X" && (j+1)!=area_width) {
 				if (area_line[i][j+1] == L"B") {
 					this->ResetBerry();
+				}
+				if (area_line[i ][j+1] == L"W") {
+					this->Dead();
 				}
 				area_line[i][j] = L"_";
 				area_line[i][j+1] = L"X";
@@ -67,6 +87,9 @@ void Playground::moveLeft(float elapsed_f)
 				if (area_line[i][j - 1] == L"B") {
 					this->ResetBerry();
 				}
+				if (area_line[i ][j-1] == L"W") {
+					this->Dead();
+				}
 				area_line[i][j] = L"_";
 				area_line[i][j - 1] = L"X";
 				return;
@@ -82,6 +105,9 @@ void Playground::moveUp(float elapsed_f)
 			if (area_line[i][j] == L"X" && (i - 1) != -1) {
 				if (area_line[i-1][j] == L"B") {
 					this->ResetBerry();
+				}
+				if (area_line[i - 1][j] == L"W") {
+					this->Dead();
 				}
 				area_line[i][j] = L"_";
 				area_line[i-1][j] = L"X";
@@ -99,6 +125,9 @@ void Playground::moveDown(float elapsed_f)
 				if (area_line[i+1][j] == L"B") {
 					this->ResetBerry();
 				}
+				if (area_line[i + 1][j] == L"W") {
+					this->Dead();
+				}
 				area_line[i][j] = L"_";
 				area_line[i+1][j] = L"X";
 				return;
@@ -110,6 +139,9 @@ void Playground::moveDown(float elapsed_f)
 
 void Playground::move(float elapsed_f)
 {
+	if (dead) {
+		return;
+	}
 	switch (movedir) {
 	case Moving::UP: {
 		this->moveUp(elapsed_f);
@@ -160,5 +192,17 @@ void Playground::ClickDown()
 
 void Playground::ResetBerry()
 {
-	area_line[rand() % area_height][rand() % area_width] = L"B";
+	this->score += 1;
+	while (1) {
+		int x = rand() % (area_height - 2) + 1;
+		int y = (rand() % (area_width - 2)) + 1;
+		if (x != 10 && y != 10) {
+			area_line[x][y] = L"B";
+			return;
+		}
+	}
+}
+
+void Playground::Dead() {
+	dead = true;
 }

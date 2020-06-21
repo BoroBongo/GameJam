@@ -9,6 +9,7 @@ Graphics::Graphics()
 	renderTarget = nullptr;
 	writeFactory = nullptr;
 	TextFormat = nullptr;
+	TextFormatScore = nullptr;
 	TextLayout = nullptr;
 }
 
@@ -23,7 +24,7 @@ Graphics::~Graphics()
 
 bool Graphics::Init(HWND windowHandle)
 {
-	HRESULT res = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
+	HRESULT res = CreateDeviceIndependentResources();
 	if (res != S_OK) return false;
 
 	RECT rect;
@@ -65,13 +66,27 @@ HRESULT Graphics::CreateDeviceIndependentResources()
 			L"", //locale
 			&TextFormat
 		);
+
+		res = writeFactory->CreateTextFormat(
+			msc_fontName,
+			NULL,
+			DWRITE_FONT_WEIGHT_NORMAL,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			msc_fontSize+10,
+			L"", //locale
+			&TextFormatScore
+		);
+
 	}
 	if (SUCCEEDED(res))
 	{
 		// Center the text horizontally and vertically.
 		TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		TextFormatScore->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
 		TextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+		TextFormatScore->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 
 	}
@@ -109,7 +124,6 @@ void Graphics::DrawRectangle(float x, float y, float r, float g, float b, float 
 void Graphics::DrawSomeText(float x, float y, float r, float g, float b, float a, const std::wstring& string1)
 {
 	D2D1_SIZE_F renderTargetSize = renderTarget->GetSize();
-	HRESULT res = CreateDeviceIndependentResources();
 	ID2D1SolidColorBrush* brush;
 	renderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush);
 
@@ -117,16 +131,30 @@ void Graphics::DrawSomeText(float x, float y, float r, float g, float b, float a
 
 	renderTarget->DrawTextW(string1.c_str(), string1.size(), TextFormat, D2D1::RectF(x-240.0f, y-240.0f, renderTargetSize.width, renderTargetSize.height), brush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL);
 	//renderTarget->DrawTextLayout(D2D1::Point2F((x-240.0f),(y-240.0f)),TextLayout,brush,D2D1_DRAW_TEXT_OPTIONS_NONE);
-	brush->Release();
+		brush->Release();
+}
+
+void Graphics::DrawSomeTextScore(float x, float y, float r, float g, float b, float a, const std::wstring& string1)
+{
+	D2D1_SIZE_F renderTargetSize = renderTarget->GetSize();
+	ID2D1SolidColorBrush* brush;
+	renderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush);
+
+	//res = writeFactory->CreateTextLayout(text.c_str(), size, TextFormat, renderTargetSize.width, renderTargetSize.height, &TextLayout);
+
+	renderTarget->DrawTextW(string1.c_str(), string1.size(), TextFormatScore, D2D1::RectF(x - 240.0f, y - 240.0f, renderTargetSize.width, renderTargetSize.height), brush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL);
+	//renderTarget->DrawTextLayout(D2D1::Point2F((x-240.0f),(y-240.0f)),TextLayout,brush,D2D1_DRAW_TEXT_OPTIONS_NONE);
+		brush->Release();
 }
 
 
-void Graphics::DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f)
+
+void Graphics::DrawPlayground(std::unique_ptr<Playground> & playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f)
 {
 	int h = *(playground->getHeight());
 	int w = *(playground->getWidth());
 	wstring check = L"0";
-	vector<vector<wstring> >& items = *(playground->getArray());
+	vector<vector<wstring> > items = *(playground->getArray());
 	for (int i = 0; i < h;i++) {
 		for (int j = 0; j < w; j++) {
 			this->DrawRectangle(x, y, 0.5, 0.5, 1, 1, width, width);

@@ -4,6 +4,8 @@
 #include <thread>
 #include <chrono>
 #include <stdlib.h>
+#include <memory>
+#include <crtdbg.h>
 
 using namespace std;
 
@@ -16,6 +18,8 @@ class Playground
 
 
 public:
+	int score =-1;
+	bool dead = false;
 	enum class Moving
 	{
 		UP,
@@ -47,6 +51,7 @@ public:
 	void ClickUp();
 	void ClickDown();
 
+	void Dead();
 	void ResetBerry();
 };
 

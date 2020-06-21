@@ -10,6 +10,7 @@ class Graphics
 	ID2D1HwndRenderTarget* renderTarget;
 	IDWriteFactory* writeFactory;
 	IDWriteTextFormat* TextFormat;
+	IDWriteTextFormat* TextFormatScore;
 	IDWriteTextLayout* TextLayout;
 
 public:
@@ -28,7 +29,8 @@ public:
 	void DrawRectangle(float x, float y, float r, float g, float b, float a, float width, float height);
 
 	void DrawSomeText(float x, float y, float r, float g, float b, float a, const std::wstring& string1);
+	void DrawSomeTextScore(float x, float y, float r, float g, float b, float a, const std::wstring& string1);
 
-	void DrawPlayground(Playground* playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f);
+	void DrawPlayground(std::unique_ptr<Playground> & playground, float x, float y, float width, float r, float g, float b, float a, float elapsed_f);
 };
 
