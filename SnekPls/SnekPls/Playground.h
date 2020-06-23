@@ -16,6 +16,7 @@ class Playground
 	vector<vector<wstring> > area_line;
 	vector<int> head_pos;
 	vector<int> berry_pos;
+	vector<int> previousPos;
 
 
 public:

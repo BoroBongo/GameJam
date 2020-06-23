@@ -165,8 +165,11 @@ void Graphics::DrawPlayground(std::unique_ptr<Playground> & playground, float x,
 			if (items[i][j] == L"B") {
 				this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, b, g, g, a);
 			}
-			if (items[i][j] == L"0") {
-				this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, 0.75f, g, g, a);
+			for (int s = 0; s <= playground->score; s++) {
+				wstring check = to_wstring(s);
+				if (items[i][j] == check) {
+					this->DrawCircle((x + 12.5f), (y + 12.5f), 7.0f, 0.75f, g, g, a);
+				}
 			}
 			x += width;
 		}

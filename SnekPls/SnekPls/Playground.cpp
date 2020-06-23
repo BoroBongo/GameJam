@@ -3,7 +3,7 @@
 
 Playground::Playground(int area_widthN, int area_heightN)
 {
-
+	previousPos = {0,0};
 	srand(time(NULL));
 	area_width = area_widthN;
 	area_height = area_heightN;
@@ -21,6 +21,7 @@ Playground::Playground(int area_widthN, int area_heightN)
 	area_line[10][10] = L"X";
 	area_line[10][9] = L"0";
 	area_line[10][8] = L"1";
+	area_line[10][7] = L"2";
 	this->ResetBerry();
 
 	//to_wstring(j +(area_width*i))
@@ -74,6 +75,14 @@ void Playground::moveRight()
 				}
 				if (area_line[i ][j+1] == L"W") {
 					this->Dead();
+					return;
+				}
+				for (int s = 0; s <= score; s++) {
+					wstring check = to_wstring(s);
+					if (area_line[i][j+1] == check) {
+						this->Dead();
+						return;
+					}
 				}
 				area_line[i][j] = L"_";
 				area_line[i][j+1] = L"X";
@@ -85,7 +94,6 @@ void Playground::moveRight()
 }
 
 void Playground::moveBody() {
-	vector<int> previousPos;
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
 			if (area_line[i][j] == L"0") {
@@ -117,64 +125,88 @@ void Playground::moveBody() {
 		}
 	}
 
+	wstring check;
+	for (int k = 1; k <= score; k++) {
+		bool found = false;
+		check = to_wstring(k);
 	for (int i = 0; i < area_height; i++) {
 		for (int j = 0; j < area_width; j++) {
-			for (int k = score; k >= 1; k--) {
-				wstring check = to_wstring(k);
 				if (area_line[i][j] == check) {
-					if (area_line[i][j + 2] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					found = true;
+					if (j + 2 <= (area_width - 1)) {
+						if (area_line[i][j + 2] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[previousPos[0]][previousPos[1]] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i+1][j + 2] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (j - 2 >= 0) {
+						if (area_line[i][j - 2] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i][j - 2] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (i + 2 <= (area_height - 1)) {
+						if (area_line[i + 2][j] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i-1][j - 2] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (i - 2 >= 0) {
+						if (area_line[i - 2][j] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i + 1][j] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (i + 1 <= (area_height - 1) && j + 1 <= (area_width - 1)) {
+						if (area_line[i + 1][j + 1] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i + 1][j-1] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (i - 1 >= 0 && j - 1 >= 0) {
+						if (area_line[i - 1][j - 1] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i - 2][j] == to_wstring(k - 1)) {
-						area_line[previousPos[0]][previousPos[1]] = check;
-						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
+					if (i - 1 >= 0 && j + 1 <= (area_width - 1)) {
+						if (area_line[i - 1][j + 1] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
 					}
-					if (area_line[i - 2][j+1] == to_wstring(k - 1)) {
+					if (i + 1 <= (area_height - 1) && j - 1 >= 0) {
+						if (area_line[i + 1][j - 1] == to_wstring(k - 1)) {
+							area_line[previousPos[0]][previousPos[1]] = check;
+							previousPos = { i,j };
+							area_line[i][j] = L"_";
+							continue;
+						}
+					}
+				}
+				if (i == area_height-1 && j == area_width-1) {
+					if (!found) {
 						area_line[previousPos[0]][previousPos[1]] = check;
 						previousPos = { i,j };
-						area_line[i][j] = L"_";
-						continue;
 					}
 				}
 			}
 		}
 	}
-
 }
 
 void Playground::moveLeft()
@@ -187,6 +219,13 @@ void Playground::moveLeft()
 				}
 				if (area_line[i ][j-1] == L"W") {
 					this->Dead();
+				}
+				for (int s = 0; s <= score; s++) {
+					wstring check = to_wstring(s);
+					if (area_line[i][j - 1] == check) {
+						this->Dead();
+						return;
+					}
 				}
 				area_line[i][j] = L"_";
 				area_line[i][j - 1] = L"X";
@@ -207,6 +246,13 @@ void Playground::moveUp()
 				if (area_line[i - 1][j] == L"W") {
 					this->Dead();
 				}
+				for (int s = 0; s <= score; s++) {
+					wstring check = to_wstring(s);
+					if (area_line[i-1][j] == check) {
+						this->Dead();
+						return;
+					}
+				}
 				area_line[i][j] = L"_";
 				area_line[i-1][j] = L"X";
 				return;
@@ -225,6 +271,13 @@ void Playground::moveDown()
 				}
 				if (area_line[i + 1][j] == L"W") {
 					this->Dead();
+				}
+				for (int s = 0; s <= score; s++) {
+					wstring check = to_wstring(s);
+					if (area_line[i+1][j] == check) {
+						this->Dead();
+						return;
+					}
 				}
 				area_line[i][j] = L"_";
 				area_line[i+1][j] = L"X";
@@ -310,10 +363,16 @@ void Playground::ResetBerry()
 	while (1) {
 		int x = rand() % (area_height - 3) + 1;
 		int y = rand() % (area_width - 3) + 1;
-		if (x != head_pos[0] && y != head_pos[1]) {
-			area_line[x][y] = L"B";
-			berry_pos = {x,y};
-			return;
+		for (int s = 0; s <= score; s++) {
+			wstring check = to_wstring(s);
+			if (area_line[x][y] == check ||( x == previousPos[0] && y == previousPos[1])) {
+				continue;
+			}
+				if (x != head_pos[0] && y != head_pos[1]) {
+					area_line[x][y] = L"B";
+					berry_pos = { x,y };
+					return;
+				}
 		}
 	}
 }
