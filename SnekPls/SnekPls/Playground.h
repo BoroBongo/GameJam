@@ -31,6 +31,7 @@ public:
 	};
 
 	Moving movedir = Moving::RIGHT;
+	Moving prevmovedir = Moving::RIGHT;
 
 	Playground(int area_widthN, int area_heightN);
 	~Playground();

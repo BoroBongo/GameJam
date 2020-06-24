@@ -332,6 +332,7 @@ void Playground::setHeadPos() {
 void Playground::ClickRight()
 {
 	if (movedir != Moving::LEFT) {
+	prevmovedir = movedir;
 		movedir = Moving::RIGHT;
 	}
 }
@@ -339,6 +340,7 @@ void Playground::ClickRight()
 void Playground::ClickLeft()
 {
 	if (movedir != Moving::RIGHT) {
+	prevmovedir = movedir;
 		movedir = Moving::LEFT;
 	}
 }
@@ -346,6 +348,7 @@ void Playground::ClickLeft()
 void Playground::ClickUp()
 {
 	if (movedir != Moving::DOWN) {
+	prevmovedir = movedir;
 		movedir = Moving::UP;
 	}
 }
@@ -353,6 +356,7 @@ void Playground::ClickUp()
 void Playground::ClickDown()
 {
 	if (movedir != Moving::UP) {
+	prevmovedir = movedir;
 		movedir = Moving::DOWN;
 	}
 }
@@ -361,11 +365,20 @@ void Playground::ResetBerry()
 {
 	this->score += 1;
 	while (1) {
+		bool reset = false;
 		int x = rand() % (area_height - 3) + 1;
 		int y = rand() % (area_width - 3) + 1;
 		for (int s = 0; s <= score; s++) {
 			wstring check = to_wstring(s);
-			if (area_line[x][y] == check ||( x == previousPos[0] && y == previousPos[1])) {
+			if (area_line[x][y] == check ||( x == previousPos[0] && y == previousPos[1])){
+				reset = true;
+				break;
+			}
+		}
+		if (reset) {
+			continue;
+		}
+			if (( x == previousPos[0] && y == previousPos[1])) {
 				continue;
 			}
 				if (x != head_pos[0] && y != head_pos[1]) {
@@ -373,7 +386,7 @@ void Playground::ResetBerry()
 					berry_pos = { x,y };
 					return;
 				}
-		}
+		
 	}
 }
 

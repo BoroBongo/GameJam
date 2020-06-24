@@ -28,6 +28,8 @@ string keyClicked = "";
 char pressedKey;
 char check = 'X';
 
+bool InputChecked = false;
+
 void resetstring() {
 	wstringstream ossc;
 	oss.swap(ossc);
@@ -73,9 +75,48 @@ void print(HWND hwnd) {
 	}
 
 	string s = keyClicked;
+	string ss,sss;
 	wstring wst(s.begin(),s.end());
+	switch (playground->prevmovedir) {
+	case Playground::Moving::DOWN: {
+		ss = "DOWN";
+		break;
+	}
+	case Playground::Moving::UP: {
+		ss = "UP";
+		break;
+	}
+	case Playground::Moving::LEFT: {
+		ss = "LEFT";
+		break;
+	}
+	case Playground::Moving::RIGHT: {
+		ss = "RIGHT";
+		break;
+	}
+	}
+	switch (playground->movedir) {
+	case Playground::Moving::DOWN: {
+		sss = "DOWN";
+		break;
+	}
+	case Playground::Moving::UP: {
+		sss = "UP";
+		break;
+	}
+	case Playground::Moving::LEFT: {
+		sss = "LEFT";
+		break;
+	}
+	case Playground::Moving::RIGHT: {
+		sss = "RIGHT";
+		break;
+	}
+	}
+	wstring wstt(ss.begin(), ss.end());
+	wstring wsttt(sss.begin(), sss.end());
 
-	oss << nMousePos[0] << "  " << nMousePos[1] << " | " << mouseClicked << " | " << wst;
+	oss << nMousePos[0] << "  " << nMousePos[1] << " | " << mouseClicked << " | " << " " << wstt << " " << wsttt;
 
 	SetWindowTextW(hwnd, oss.str().c_str());
 }
@@ -124,7 +165,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 	}
 	case VK_RIGHT: {
-		
 		movedir = Playground::Moving::RIGHT;
 		break;
 	}
@@ -133,12 +173,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 	}
 	case VK_UP: {
-		
 		movedir = Playground::Moving::UP;
 		break;
 	}
 	case VK_DOWN: {
-		
 		movedir = Playground::Moving::DOWN;
 		break;
 	}
@@ -160,6 +198,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 void InputCheck() {
+	if (InputChecked) {
+		return;
+	}
 	switch (movedir) {
 	case Playground::Moving::UP: {
 		playground->ClickUp();
@@ -178,7 +219,7 @@ void InputCheck() {
 		break;
 	}
 	}
-
+	InputChecked = true;
 }
 
 
@@ -238,17 +279,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			graphics->DrawPlayground(playground,150.0f,50.0f, 25.0f, rgba[0], rgba[2], rgba[1], rgba[3], elapsed_f);
 			graphics->DrawSomeTextScore(-500, -100, 0.5, 1, 0.5, 1, to_wstring(playground->score));
 			teraz = std::chrono::steady_clock::now();
-			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start1);
-			if (milliseconds > std::chrono::milliseconds(150))
-			{
-				playground->move(milliseconds);
-				start1 = teraz;
-			}
 			auto milliseconds2 = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start);
-			if (milliseconds2 > std::chrono::milliseconds(151))
+			if (milliseconds2 > std::chrono::milliseconds(75))
 			{
 				InputCheck();
 				start = teraz;
+				InputChecked = false;
+
+				auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(teraz - start1);
+				if (milliseconds > std::chrono::milliseconds(75))
+				{
+					playground->move(milliseconds);
+					start1 = teraz;
+				}
 			}
 			graphics->EndDraw();
 			print(windowHandle);
